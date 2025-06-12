@@ -1,10 +1,16 @@
 import { type ErrorRequestHandler } from "express";
 import HTTP_CODES from "../constants/httpCodes";
 import ApiError from "../utils/apiError";
+import { ZodError } from "zod";
 
 const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
   console.log(`PATH: ${req.path} --- METHOD: ${req.method}`);
   console.log(err);
+
+  if (err instanceof ZodError) {
+    res.status(HTTP_CODES.BAD_REQUEST).json({ message: err.errors[0].message });
+    return;
+  }
 
   if (err instanceof ApiError) {
     res

@@ -7,6 +7,8 @@ interface UserDocument extends Document {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  comparePassword: (value: string) => Promise<boolean>;
+  omitPassword: () => Omit<UserDocument, "password">;
 }
 
 const userSchema = new mongoose.Schema<UserDocument>(
@@ -45,3 +47,6 @@ userSchema.methods.omitPassword = function () {
   delete user.password;
   return user;
 };
+
+const UserModel = mongoose.model("User", userSchema);
+export default UserModel;
