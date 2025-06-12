@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/rashid-ameer/beckend_practice_project_02#readme",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/server.ts"
   },
   "dependencies": {
     "argon2": "^0.43.0",
@@ -24,7 +24,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "mongoose": "^8.15.1"
+    "mongoose": "^8.15.1",
+    "zod": "^3.25.61"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.9",
