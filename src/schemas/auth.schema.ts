@@ -17,3 +17,14 @@ export const registerSchema = z.object(
     invalid_type_error: "Request data must be a valid object",
   }
 );
+
+export const loginSchema = z.object(
+  {
+    email: z.string({ required_error: "Email is required." }),
+    password: z.string({ required_error: "Password is required." }),
+  },
+  {
+    required_error: "Provide all required fields in valid object.",
+    invalid_type_error: "Request data must be a valid object",
+  }
+);
