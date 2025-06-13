@@ -1,6 +1,8 @@
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants/env";
 import HTTP_CODES from "../constants/httpCodes";
 import UserModel from "../models/user.model";
 import ApiError from "../utils/apiError";
+import jwt from "jsonwebtoken";
 
 interface CreateUserParams {
   email: string;
@@ -17,8 +19,16 @@ export const createUser = async (data: CreateUserParams) => {
   // if not register the user
   const user = await UserModel.create(data);
 
+  // sign access and refresh token
+  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, {
+    expiresIn: "30d",
+  });
+
   // send the response back
-  return user.omitPassword();
+  return { user: user.omitPassword(), accessToken, refreshToken };
 };
 
 interface LoginUserParams {
@@ -36,5 +46,12 @@ export const loginUser = async (data: LoginUserParams) => {
     throw new ApiError(HTTP_CODES.UNAUTHORIZED, "Invalid email or password.");
   }
 
-  return user.omitPassword();
+  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, {
+    expiresIn: "30d",
+  });
+
+  return { user: user.omitPassword(), accessToken, refreshToken };
 };
