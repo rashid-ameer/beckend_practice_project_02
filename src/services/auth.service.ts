@@ -68,31 +68,6 @@ export const loginUser = async (data: LoginUserParams) => {
   return { user: user.omitPassword(), accessToken, refreshToken };
 };
 
-export const logoutUser = async (accessToken: string) => {
-  const { payload } = verifyJWT<AccessTokenPayload>(
-    accessToken,
-    ACCESS_TOKEN_SECRET
-  );
-
-  if (!payload) {
-    throw new ApiError(
-      HTTP_CODES.UNAUTHORIZED,
-      "Invalid access token.",
-      ERROR_CODES.INVALID_ACCESS_TOKEN
-    );
-  }
-
-  const user = await UserModel.findById(payload.id);
-
-  if (!user) {
-    throw new ApiError(
-      HTTP_CODES.UNAUTHORIZED,
-      "Invalid access token",
-      ERROR_CODES.INVALID_ACCESS_TOKEN
-    );
-  }
-};
-
 export const refreshAccessToken = async (refreshToken: string) => {
   const { payload } = verifyJWT<RefreshTokenPayload>(
     refreshToken,

@@ -1,15 +1,14 @@
-import ERROR_CODES from "../constants/errorCodes";
-import HTTP_CODES from "../constants/httpCodes";
-import { loginSchema, registerSchema } from "../schemas/auth.schema";
 import {
   createUser,
   loginUser,
-  logoutUser,
   refreshAccessToken,
 } from "../services/auth.service";
-import ApiError from "../utils/apiError";
-import asyncHandler from "../utils/asyncHandler";
+import { loginSchema, registerSchema } from "../schemas/auth.schema";
 import { clearAuthCookies, setAuthCookies } from "../utils/cookies";
+import ERROR_CODES from "../constants/errorCodes";
+import asyncHandler from "../utils/asyncHandler";
+import HTTP_CODES from "../constants/httpCodes";
+import ApiError from "../utils/apiError";
 
 export const registerHandler = asyncHandler(async (req, res) => {
   // verify request
@@ -37,17 +36,7 @@ export const loginHandler = asyncHandler(async (req, res) => {
     .json({ user, accessToken });
 });
 
-export const logoutHandler = asyncHandler(async (req, res) => {
-  // validate a request
-  const accessToken = req.headers["authorization"]?.split(" ")?.[1];
-
-  if (!accessToken) {
-    throw new ApiError(HTTP_CODES.UNAUTHORIZED, "Access token is required.");
-  }
-
-  // call a service
-  await logoutUser(accessToken);
-
+export const logoutHandler = asyncHandler(async (_, res) => {
   // return a response
   clearAuthCookies(res)
     .status(200)
