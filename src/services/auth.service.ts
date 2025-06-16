@@ -24,6 +24,12 @@ export const createUser = async (data: CreateUserParams) => {
   }
   // if not register the user
   const user = await UserModel.create(data);
+  if (!user) {
+    throw new ApiError(
+      HTTP_CODES.INTERNAL_SERVER_ERROR,
+      "Failed to create user. Please try again."
+    );
+  }
 
   // sign access and refresh token
   const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
@@ -44,12 +50,12 @@ interface LoginUserParams {
 export const loginUser = async (data: LoginUserParams) => {
   const user = await UserModel.findOne({ email: data.email });
   if (!user) {
-    throw new ApiError(HTTP_CODES.UNAUTHORIZED, "Invalid email or password.");
+    throw new ApiError(HTTP_CODES.UNAUTHORIZED, "Incorrect email or password.");
   }
 
   const isPasswordValid = await user.comparePassword(data.password);
   if (!isPasswordValid) {
-    throw new ApiError(HTTP_CODES.UNAUTHORIZED, "Invalid email or password.");
+    throw new ApiError(HTTP_CODES.UNAUTHORIZED, "Incorrect email or password.");
   }
 
   const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {

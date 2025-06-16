@@ -1,7 +1,5 @@
-import { ACCESS_TOKEN_SECRET, NODE_ENV } from "../constants/env";
 import ERROR_CODES from "../constants/errorCodes";
 import HTTP_CODES from "../constants/httpCodes";
-import UserModel from "../models/user.model";
 import { loginSchema, registerSchema } from "../schemas/auth.schema";
 import {
   createUser,
@@ -11,13 +9,7 @@ import {
 } from "../services/auth.service";
 import ApiError from "../utils/apiError";
 import asyncHandler from "../utils/asyncHandler";
-import {
-  clearAuthCookies,
-  REFRESH_PATH,
-  setAuthCookies,
-} from "../utils/cookies";
-import jwt from "jsonwebtoken";
-import { AccessTokenPayload, verifyJWT } from "../utils/jwt";
+import { clearAuthCookies, setAuthCookies } from "../utils/cookies";
 
 export const registerHandler = asyncHandler(async (req, res) => {
   // verify request
