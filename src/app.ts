@@ -5,7 +5,8 @@ import { APP_ORIGIN } from "./constants/env";
 import authRoutes from "./routes/auth.route";
 import errorHandler from "./middlewares/errorHandler";
 import authenticate from "./middlewares/authenticate";
-import userRoutes from "./routes/user.routes";
+import userRoutes from "./routes/user.route";
+import postRoutes from "./routes/post.route";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/auth", authRoutes);
 app.use(authenticate);
 
 app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 app.get("/", (_, res) => {
   res.status(200).json({ status: "Healthy" });
