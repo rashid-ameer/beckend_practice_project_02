@@ -1,7 +1,7 @@
 import { type CookieOptions, type Response } from "express";
 import { NODE_ENV } from "../constants/env";
 
-export const REFRESH_PATH = "/refresh";
+export const REFRESH_PATH = "/auth/refresh";
 
 interface SetAuthCookiesProps {
   res: Response;

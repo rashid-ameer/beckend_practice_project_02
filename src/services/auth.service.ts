@@ -3,7 +3,11 @@ import HTTP_CODES from "../constants/httpCodes";
 import UserModel from "../models/user.model";
 import ApiError from "../utils/apiError";
 import jwt from "jsonwebtoken";
-import { AccessTokenPayload, verifyJWT } from "../utils/jwt";
+import {
+  AccessTokenPayload,
+  RefreshTokenPayload,
+  verifyJWT,
+} from "../utils/jwt";
 import ERROR_CODES from "../constants/errorCodes";
 
 interface CreateUserParams {
@@ -81,4 +85,38 @@ export const logoutUser = async (accessToken: string) => {
       ERROR_CODES.INVALID_ACCESS_TOKEN
     );
   }
+};
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  const { payload } = verifyJWT<RefreshTokenPayload>(
+    refreshToken,
+    REFRESH_TOKEN_SECRET
+  );
+
+  if (!payload) {
+    throw new ApiError(
+      HTTP_CODES.UNAUTHORIZED,
+      "Invalid or expired refresh token.",
+      ERROR_CODES.INVALID_REFRESH_TOKEN
+    );
+  }
+
+  const user = await UserModel.findById(payload.id);
+
+  if (!user) {
+    throw new ApiError(
+      HTTP_CODES.UNAUTHORIZED,
+      "Invalid or expired refresh token.",
+      ERROR_CODES.INVALID_REFRESH_TOKEN
+    );
+  }
+
+  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+  const newRefreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, {
+    expiresIn: "30d",
+  });
+
+  return { accessToken, newRefreshToken };
 };

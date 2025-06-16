@@ -3,7 +3,12 @@ import ERROR_CODES from "../constants/errorCodes";
 import HTTP_CODES from "../constants/httpCodes";
 import UserModel from "../models/user.model";
 import { loginSchema, registerSchema } from "../schemas/auth.schema";
-import { createUser, loginUser, logoutUser } from "../services/auth.service";
+import {
+  createUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+} from "../services/auth.service";
 import ApiError from "../utils/apiError";
 import asyncHandler from "../utils/asyncHandler";
 import {
@@ -55,4 +60,26 @@ export const logoutHandler = asyncHandler(async (req, res) => {
   clearAuthCookies(res)
     .status(200)
     .json({ message: "User logout successfully." });
+});
+
+export const refreshAccessTokenHandler = asyncHandler(async (req, res) => {
+  // validate a request
+  const refreshToken = req.cookies.refreshToken as string | undefined;
+  if (!refreshToken) {
+    throw new ApiError(
+      HTTP_CODES.UNAUTHORIZED,
+      "Refresh token is required.",
+      ERROR_CODES.INVALID_REFRESH_TOKEN
+    );
+  }
+
+  // call a service
+  const { accessToken, newRefreshToken } = await refreshAccessToken(
+    refreshToken
+  );
+
+  // return a response
+  setAuthCookies({ res, refreshToken: newRefreshToken })
+    .status(HTTP_CODES.OK)
+    .json({ message: "Access token refresh successfully.", accessToken });
 });
