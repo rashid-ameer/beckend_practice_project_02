@@ -12,11 +12,16 @@ const authCookieOptions: CookieOptions = {
   httpOnly: true,
   secure: NODE_ENV === "production",
   sameSite: "strict",
-  expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Fixed: Changed * to + for correct date calculation
+  expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   path: REFRESH_PATH,
 };
 
 export const setAuthCookies = ({ res, refreshToken }: SetAuthCookiesProps) => {
   res.cookie("refreshToken", refreshToken, authCookieOptions);
+  return res;
+};
+
+export const clearAuthCookies = (res: Response) => {
+  res.clearCookie("refreshToken", authCookieOptions);
   return res;
 };
