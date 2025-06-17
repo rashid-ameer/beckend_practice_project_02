@@ -34,3 +34,11 @@ export const updatePost = async ({ id, content }: UpdatePostParams) => {
 
   return post;
 };
+
+export const deletePost = async (id: string) => {
+  const deletedPost = await PostModel.findByIdAndDelete(id);
+  if (!deletedPost) {
+    throw new ApiError(HTTP_CODES.NOT_FOUND, "Post not found.");
+  }
+  return deletedPost;
+};

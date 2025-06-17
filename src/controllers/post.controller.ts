@@ -1,7 +1,8 @@
 import { createPostSchema, updatePostSchema } from "../schemas/post.schema";
-import { createPost, updatePost } from "../services/post.service";
+import { createPost, deletePost, updatePost } from "../services/post.service";
 import asyncHandler from "../utils/asyncHandler";
 import HTTP_CODES from "../constants/httpCodes";
+import { mongooseIdSchema } from "../schemas/common.schema";
 
 export const createPostHandler = asyncHandler(async (req, res) => {
   // validate a request
@@ -28,4 +29,17 @@ export const updatePostHandler = asyncHandler(async (req, res) => {
   res
     .status(HTTP_CODES.OK)
     .json({ message: "Post updated successfully.", post });
+});
+
+export const deletePostHandler = asyncHandler(async (req, res) => {
+  // validate a request
+  const id = mongooseIdSchema("Post id is required.", "Invalid post id.").parse(
+    req.params.id
+  );
+
+  // call a servide
+  await deletePost(id);
+
+  // return a response
+  res.status(HTTP_CODES.OK).json({ message: "Post deleted successfully." });
 });
