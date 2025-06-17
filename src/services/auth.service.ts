@@ -22,7 +22,7 @@ export const createUser = async (data: CreateUserParams) => {
   if (existingUser) {
     throw new ApiError(HTTP_CODES.CONFLICT, "Email already exists.");
   }
-  // if not register the user
+  // register the user
   const user = await UserModel.create(data);
   if (!user) {
     throw new ApiError(

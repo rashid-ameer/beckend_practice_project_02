@@ -20,7 +20,7 @@ export const registerHandler = asyncHandler(async (req, res) => {
   // return resposne
   setAuthCookies({ res, refreshToken })
     .status(HTTP_CODES.CREATED)
-    .json({ user, accessToken });
+    .json({ message: "User created successfully.", user, accessToken });
 });
 
 export const loginHandler = asyncHandler(async (req, res) => {
@@ -33,7 +33,7 @@ export const loginHandler = asyncHandler(async (req, res) => {
   // return response
   setAuthCookies({ res, refreshToken })
     .status(HTTP_CODES.OK)
-    .json({ user, accessToken });
+    .json({ message: "User logged in successfully.", user, accessToken });
 });
 
 export const logoutHandler = asyncHandler(async (_, res) => {

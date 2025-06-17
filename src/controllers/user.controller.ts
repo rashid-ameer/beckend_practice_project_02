@@ -5,8 +5,8 @@ import HTTP_CODES from "../constants/httpCodes";
 import ApiError from "../utils/apiError";
 
 export const getLoggedInUserHandler = asyncHandler(async (req, res) => {
-  const request = req.userId as string;
-  const user = await getUserById(request);
+  const userId = req.userId as string;
+  const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(HTTP_CODES.NOT_FOUND, "User not found.");
   }
