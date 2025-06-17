@@ -42,3 +42,7 @@ export const deletePost = async (id: string) => {
   }
   return deletedPost;
 };
+
+export const getPostsByAuthorId = async (authorId: string) => {
+  return PostModel.find({ author: authorId });
+};

@@ -1,5 +1,10 @@
 import { createPostSchema, updatePostSchema } from "../schemas/post.schema";
-import { createPost, deletePost, updatePost } from "../services/post.service";
+import {
+  createPost,
+  deletePost,
+  getPostsByAuthorId,
+  updatePost,
+} from "../services/post.service";
 import asyncHandler from "../utils/asyncHandler";
 import HTTP_CODES from "../constants/httpCodes";
 import { mongooseIdSchema } from "../schemas/common.schema";
@@ -42,4 +47,17 @@ export const deletePostHandler = asyncHandler(async (req, res) => {
 
   // return a response
   res.status(HTTP_CODES.OK).json({ message: "Post deleted successfully." });
+});
+
+export const getAuthorPostsHandler = asyncHandler(async (req, res) => {
+  const authorId = mongooseIdSchema(
+    "Author id is required.",
+    "Invalid author id"
+  ).parse(req.params.id);
+
+  const posts = await getPostsByAuthorId(authorId);
+
+  res
+    .status(HTTP_CODES.OK)
+    .json({ message: "Fetched posts successfully.", posts });
 });
