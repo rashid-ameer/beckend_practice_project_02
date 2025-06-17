@@ -16,3 +16,21 @@ export const createPost = async ({ content, author }: CreatePostParams) => {
   }
   return post;
 };
+
+interface UpdatePostParams {
+  id: string;
+  content?: string;
+}
+export const updatePost = async ({ id, content }: UpdatePostParams) => {
+  const post = await PostModel.findByIdAndUpdate(
+    id,
+    { content },
+    { runValidators: true, new: true }
+  );
+
+  if (!post) {
+    throw new ApiError(HTTP_CODES.NOT_FOUND, "Post not found.");
+  }
+
+  return post;
+};
