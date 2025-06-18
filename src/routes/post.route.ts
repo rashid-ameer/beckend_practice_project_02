@@ -3,6 +3,7 @@ import {
   createPostHandler,
   deletePostHandler,
   getAuthorPostsHandler,
+  getLoggedInAuthorPostsHandler,
   updatePostHandler,
 } from "../controllers/post.controller";
 
@@ -13,5 +14,6 @@ postRoutes.post("/create", createPostHandler);
 postRoutes.patch("/update/:id", updatePostHandler);
 postRoutes.delete("/delete/:id", deletePostHandler);
 postRoutes.get("/author/:id", getAuthorPostsHandler);
+postRoutes.get("/author", getLoggedInAuthorPostsHandler);
 
 export default postRoutes;

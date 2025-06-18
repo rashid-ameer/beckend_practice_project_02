@@ -61,3 +61,11 @@ export const getAuthorPostsHandler = asyncHandler(async (req, res) => {
     .status(HTTP_CODES.OK)
     .json({ message: "Fetched posts successfully.", posts });
 });
+
+export const getLoggedInAuthorPostsHandler = asyncHandler(async (req, res) => {
+  const authorId = req.userId as string;
+  const posts = await getPostsByAuthorId(authorId);
+  res
+    .status(HTTP_CODES.OK)
+    .json({ message: "Posts fetched successfully.", posts });
+});
