@@ -3,12 +3,9 @@ import HTTP_CODES from "../constants/httpCodes";
 import UserModel from "../models/user.model";
 import ApiError from "../utils/apiError";
 import jwt from "jsonwebtoken";
-import {
-  AccessTokenPayload,
-  RefreshTokenPayload,
-  verifyJWT,
-} from "../utils/jwt";
+import { RefreshTokenPayload, verifyJWT } from "../utils/jwt";
 import ERROR_CODES from "../constants/errorCodes";
+import { getUserById } from "./user.service";
 
 interface CreateUserParams {
   email: string;
@@ -82,7 +79,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
     );
   }
 
-  const user = await UserModel.findById(payload.id);
+  const user = await getUserById(payload.id);
 
   if (!user) {
     throw new ApiError(
