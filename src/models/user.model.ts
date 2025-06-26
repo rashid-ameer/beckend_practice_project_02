@@ -5,6 +5,7 @@ interface UserDocument extends Document {
   email: string;
   username: string;
   password: string;
+  isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword: (value: string) => Promise<boolean>;
@@ -25,6 +26,11 @@ const userSchema = new mongoose.Schema<UserDocument>(
     password: {
       type: String,
       required: true,
+    },
+    isVerified: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   {
