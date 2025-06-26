@@ -3,7 +3,7 @@ import HTTP_CODES from "../constants/httpCodes";
 import ApiError from "../utils/apiError";
 import { ZodError } from "zod";
 
-const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = async (err, req, res, _) => {
   console.log(`PATH: ${req.path} --- METHOD: ${req.method}`);
   console.log(err);
 
