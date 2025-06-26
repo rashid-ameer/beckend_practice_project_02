@@ -7,7 +7,7 @@ import HTTP_CODES from "../constants/httpCodes";
 import ApiError from "../utils/apiError";
 
 const authenticate = asyncHandler(async (req, _, next) => {
-  const accessToken = req.headers["authorization"]?.split(" ")?.[1];
+  const accessToken = req.headers["authorization"]?.split(" ")[1];
   if (!accessToken) {
     throw new ApiError(
       HTTP_CODES.UNAUTHORIZED,
