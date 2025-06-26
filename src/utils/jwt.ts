@@ -11,7 +11,7 @@ export interface RefreshTokenPayload {
 export const verifyJWT = <T>(token: string, secret: string) => {
   try {
     const payload = jwt.verify(token, secret) as T;
-    return { payload };
+    return { payload, error: null };
   } catch (error) {
     if (error instanceof JsonWebTokenError) {
       return { error };
