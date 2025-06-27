@@ -14,3 +14,5 @@ export const MONGODB_URI = getEnv("MONGODB_URI");
 export const APP_ORIGIN = getEnv("APP_ORIGIN");
 export const ACCESS_TOKEN_SECRET = getEnv("ACCESS_TOKEN_SECRET");
 export const REFRESH_TOKEN_SECRET = getEnv("REFRESH_TOKEN_SECRET");
+export const RESEND_API_KEY = getEnv("RESEND_API_KEY");
+export const EMAIL_SENDER = getEnv("EMAIL_SENDER");

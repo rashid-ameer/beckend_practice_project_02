@@ -6,6 +6,10 @@ import jwt from "jsonwebtoken";
 import { RefreshTokenPayload, verifyJWT } from "../utils/jwt";
 import ERROR_CODES from "../constants/errorCodes";
 import { getUserById } from "./user.service";
+import { generateRandomString } from "../utils/common";
+import { createEmailVerification } from "./emailVerification.service";
+import sendEmail from "../utils/sendMail";
+import { getVerifyEmailTemplate } from "../emailTemplates";
 
 interface CreateUserParams {
   email: string;
@@ -26,6 +30,23 @@ export const createUser = async (data: CreateUserParams) => {
       HTTP_CODES.INTERNAL_SERVER_ERROR,
       "Failed to create user. Please try again."
     );
+  }
+
+  const code = generateRandomString(6);
+
+  const emailVerification = await createEmailVerification({
+    code,
+    userId: user.id,
+    email: user.email,
+    createdAt: new Date(),
+    expiresAt: new Date(Date.now() + 3 * 60 * 1000),
+  });
+
+  if (emailVerification) {
+    sendEmail({
+      to: user.email,
+      ...getVerifyEmailTemplate(code),
+    });
   }
 
   // sign access and refresh token
