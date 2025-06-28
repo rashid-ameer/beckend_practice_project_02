@@ -39,7 +39,7 @@ export const createUser = async (data: CreateUserParams) => {
     userId: user.id,
     email: user.email,
     createdAt: new Date(),
-    expiresAt: new Date(Date.now() + 1 * 60 * 1000),
+    expiresAt: new Date(Date.now() + 60 * 60 * 1000),
   });
 
   if (emailVerification) {
