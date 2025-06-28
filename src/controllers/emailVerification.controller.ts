@@ -9,7 +9,17 @@ export const verifyUserEmailHandler = asyncHandler(async (req, res) => {
   const userId = req.userId as string;
 
   // call a service
-  const user = await verifyUserEmail({ userId, ...request });
+  const { user, alreadyVerified } = await verifyUserEmail({
+    userId,
+    ...request,
+  });
+
+  if (alreadyVerified) {
+    res
+      .status(HTTP_CODES.OK)
+      .json({ message: "User is already verified.", user });
+    return;
+  }
 
   // return a response
   res
