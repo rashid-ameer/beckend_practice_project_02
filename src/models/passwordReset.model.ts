@@ -1,21 +1,21 @@
 import mongoose, { type Document } from "mongoose";
 
 interface PasswordResetDocument extends Document {
-  email: string;
   userId: mongoose.Types.ObjectId;
+  email: string;
   token: string;
   expiresAt: Date;
   createdAt: Date;
 }
 
 const passwordResetSchema = new mongoose.Schema<PasswordResetDocument>({
-  email: {
-    type: String,
-    required: true,
-  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+  email: {
+    type: String,
     required: true,
   },
   token: {
