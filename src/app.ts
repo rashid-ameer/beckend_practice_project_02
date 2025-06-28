@@ -7,6 +7,7 @@ import errorHandler from "./middlewares/errorHandler";
 import authenticate from "./middlewares/authenticate";
 import userRoutes from "./routes/user.route";
 import postRoutes from "./routes/post.route";
+import emailVerificationRoutes from "./routes/emailVerification.route";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(authenticate);
 
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/email-verification", emailVerificationRoutes);
 
 app.get("/", (_, res) => {
   res.status(200).json({ status: "Healthy" });

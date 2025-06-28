@@ -55,9 +55,8 @@ export const refreshAccessTokenHandler = asyncHandler(async (req, res) => {
   }
 
   // call a service
-  const { accessToken, newRefreshToken } = await refreshAccessToken(
-    refreshToken
-  );
+  const { accessToken, newRefreshToken } =
+    await refreshAccessToken(refreshToken);
 
   // return a response
   setAuthCookies({ res, refreshToken: newRefreshToken })
