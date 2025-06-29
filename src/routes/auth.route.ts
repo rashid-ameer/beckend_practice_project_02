@@ -5,6 +5,7 @@ import {
   refreshAccessTokenHandler,
   registerHandler,
   requestPasswordResetHandler,
+  resetPasswordHandler,
 } from "../controllers/auth.controller";
 import authenticate from "../middlewares/authenticate";
 
@@ -14,7 +15,8 @@ const authRoutes = Router();
 authRoutes.post("/register", registerHandler);
 authRoutes.post("/login", loginHandler);
 authRoutes.get("/refresh", refreshAccessTokenHandler);
-authRoutes.post("/password-reset", requestPasswordResetHandler);
+authRoutes.post("/request-password-reset", requestPasswordResetHandler);
+authRoutes.post("/password-reset", resetPasswordHandler);
 
 // protected routes
 authRoutes.get("/logout", authenticate, logoutHandler);

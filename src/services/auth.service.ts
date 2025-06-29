@@ -10,15 +10,16 @@ import jwt from "jsonwebtoken";
 import { RefreshTokenPayload, verifyJWT } from "../utils/jwt";
 import ERROR_CODES from "../constants/errorCodes";
 import { getUserById } from "./user.service";
-import { generateRandomString } from "../utils/common";
+import { generateOTP } from "../utils/common";
 import { createEmailVerification } from "./emailVerification.service";
 import sendEmail from "../utils/sendMail";
 import {
   getPasswordResetTemplate,
   getVerifyEmailTemplate,
 } from "../emailTemplates";
-import { secureHash } from "../utils/argon";
+import { verifyHash } from "../utils/argon";
 import PasswordResetModel from "../models/passwordReset.model";
+import crypto from "crypto";
 
 interface CreateUserParams {
   email: string;
@@ -41,7 +42,7 @@ export const createUser = async (data: CreateUserParams) => {
     );
   }
 
-  const code = generateRandomString(6);
+  const code = generateOTP(6);
 
   const emailVerification = await createEmailVerification({
     code,
@@ -136,15 +137,63 @@ export const requestPasswordReset = async (email: string) => {
     throw new ApiError(HTTP_CODES.NOT_FOUND, "Email not found.");
   }
 
-  const token = await secureHash(generateRandomString(8));
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   await PasswordResetModel.create({
     userId: user._id,
     email: user.email,
-    token,
+    token: hashedToken,
     expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-    createdAt: Date.now(),
   });
 
   const url = `${APP_ORIGIN}/password-reset/${token}`;
-  await sendEmail({ to: user.email, ...getPasswordResetTemplate(url) });
+  const { error } = await sendEmail({
+    to: user.email,
+    ...getPasswordResetTemplate(url),
+  });
+  if (error) {
+    throw new ApiError(
+      HTTP_CODES.SERVICE_TEMPORARY_UNAVAILABLE,
+      "Failed to send email. Please try again."
+    );
+  }
+};
+
+interface ResetPasswordParams {
+  password: string;
+  token: string;
+}
+export const resetPassword = async ({
+  password,
+  token,
+}: ResetPasswordParams) => {
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const passwordRecord = await PasswordResetModel.findOne({
+    token: hashedToken,
+    expiresAt: { $gt: new Date() },
+  });
+  if (!passwordRecord) {
+    throw new ApiError(HTTP_CODES.BAD_REQUEST, "Invalid or expired token.");
+  }
+
+  const user = await UserModel.findById(passwordRecord.userId);
+  if (!user) {
+    throw new ApiError(HTTP_CODES.BAD_REQUEST, "Invalid or expired token.");
+  }
+
+  const isPasswordSame = await verifyHash(user.password, password);
+  if (isPasswordSame) {
+    throw new ApiError(
+      HTTP_CODES.BAD_REQUEST,
+      "New password cannot be same as old password."
+    );
+  }
+
+  await passwordRecord.deleteOne();
+
+  user.password = password;
+  user.isVerified = true;
+  const updatedUser = await user.save();
+  return updatedUser.omitPassword();
 };

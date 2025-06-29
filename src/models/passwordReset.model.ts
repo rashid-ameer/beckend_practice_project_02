@@ -8,29 +8,31 @@ interface PasswordResetDocument extends Document {
   createdAt: Date;
 }
 
-const passwordResetSchema = new mongoose.Schema<PasswordResetDocument>({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+const passwordResetSchema = new mongoose.Schema<PasswordResetDocument>(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    token: {
+      type: String,
+      required: true,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+      index: { expireAfterSeconds: 0 },
+    },
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  token: {
-    type: String,
-    required: true,
-  },
-  expiresAt: {
-    type: Date,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-  },
-});
+  {
+    timestamps: { createdAt: true, updatedAt: false },
+  }
+);
 
 const PasswordResetModel = mongoose.model<PasswordResetDocument>(
   "PasswordReset",
