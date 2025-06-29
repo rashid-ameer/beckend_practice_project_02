@@ -62,12 +62,16 @@ export const verifyUserEmail = async ({
 };
 
 export const resendVerificationEmail = async (userId: string) => {
-  await EmailVerificationModel.deleteMany({ userId });
   const user = await getUserById(userId);
-
   if (!user) {
     throw new ApiError(HTTP_CODES.NOT_FOUND, "User not found");
   }
+
+  if (user.isVerified) {
+    return false;
+  }
+
+  await EmailVerificationModel.deleteMany({ userId });
 
   const code = generateRandomString(6);
   const emailVerification = await createEmailVerification({
@@ -95,4 +99,6 @@ export const resendVerificationEmail = async (userId: string) => {
       "Error in sending email. Please try again."
     );
   }
+
+  return true;
 };

@@ -34,7 +34,10 @@ export const resendVerificationEmailHandler = asyncHandler(async (req, res) => {
   const userId = req.userId as string;
 
   // call a service
-  await resendVerificationEmail(userId);
+  const userVerifiedStatus = await resendVerificationEmail(userId);
+  if (!userVerifiedStatus) {
+    res.status(HTTP_CODES.OK).json({ message: "User is already verified." });
+  }
 
   // return a response
   res.status(HTTP_CODES.OK).json({ message: "Email send successfully." });
