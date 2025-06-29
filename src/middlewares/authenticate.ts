@@ -37,10 +37,6 @@ const authenticate = asyncHandler(async (req, _, next) => {
     );
   }
 
-  if (!user.isVerified) {
-    throw new ApiError(HTTP_CODES.FORBIDDEN, "Email verification required.");
-  }
-
   req.userId = payload.id;
   next();
 });
