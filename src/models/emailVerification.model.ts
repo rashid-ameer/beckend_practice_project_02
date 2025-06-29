@@ -8,29 +8,28 @@ interface EmailVerificaitonDocument extends Document {
   createdAt: Date;
 }
 
-const emailVerificaitonSchema = new mongoose.Schema<EmailVerificaitonDocument>({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "User",
+const emailVerificaitonSchema = new mongoose.Schema<EmailVerificaitonDocument>(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    code: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
   },
-  code: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  expiresAt: {
-    type: Date,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-  },
-});
+  { timestamps: { createdAt: true, updatedAt: false } }
+);
 
 const EmailVerificationModel = mongoose.model<EmailVerificaitonDocument>(
   "EmailVerificaiton",

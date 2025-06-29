@@ -3,7 +3,7 @@ import { getVerifyEmailTemplate } from "../emailTemplates";
 import EmailVerificationModel from "../models/emailVerification.model";
 import UserModel from "../models/user.model";
 import ApiError from "../utils/apiError";
-import { generateRandomString } from "../utils/common";
+import { generateOTP } from "../utils/common";
 import sendEmail from "../utils/sendMail";
 import { getUserById } from "./user.service";
 
@@ -73,7 +73,7 @@ export const resendVerificationEmail = async (userId: string) => {
 
   await EmailVerificationModel.deleteMany({ userId });
 
-  const code = generateRandomString(6);
+  const code = generateOTP(6);
   const emailVerification = await createEmailVerification({
     code,
     userId,
