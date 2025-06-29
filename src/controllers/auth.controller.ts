@@ -2,8 +2,13 @@ import {
   createUser,
   loginUser,
   refreshAccessToken,
+  requestPasswordReset,
 } from "../services/auth.service";
-import { loginSchema, registerSchema } from "../schemas/auth.schema";
+import {
+  loginSchema,
+  registerSchema,
+  requestPasswordResetSchema,
+} from "../schemas/auth.schema";
 import { clearAuthCookies, setAuthCookies } from "../utils/cookies";
 import ERROR_CODES from "../constants/errorCodes";
 import asyncHandler from "../utils/asyncHandler";
@@ -62,4 +67,15 @@ export const refreshAccessTokenHandler = asyncHandler(async (req, res) => {
   setAuthCookies({ res, refreshToken: newRefreshToken })
     .status(HTTP_CODES.OK)
     .json({ message: "Access token refresh successfully.", accessToken });
+});
+
+export const requestPasswordResetHandler = asyncHandler(async (req, res) => {
+  // validate a request
+  const request = requestPasswordResetSchema.parse(req.body);
+
+  // call a service
+  await requestPasswordReset(request.email);
+
+  // return a response
+  res.status(HTTP_CODES.OK).json({ message: "Email sent successfully." });
 });

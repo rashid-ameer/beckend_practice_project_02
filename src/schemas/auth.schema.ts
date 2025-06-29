@@ -25,6 +25,16 @@ export const loginSchema = z.object(
   },
   {
     required_error: "Request body is required.",
-    invalid_type_error: "Request body must be a valid object",
+    invalid_type_error: "Request body must be a valid object.",
+  }
+);
+
+export const requestPasswordResetSchema = z.object(
+  {
+    email: z.string({ required_error: "Email is required." }),
+  },
+  {
+    required_error: "Request body is required.",
+    invalid_type_error: "Request body must be a valid object.",
   }
 );

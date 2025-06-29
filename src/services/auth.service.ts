@@ -1,4 +1,8 @@
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants/env";
+import {
+  ACCESS_TOKEN_SECRET,
+  APP_ORIGIN,
+  REFRESH_TOKEN_SECRET,
+} from "../constants/env";
 import HTTP_CODES from "../constants/httpCodes";
 import UserModel from "../models/user.model";
 import ApiError from "../utils/apiError";
@@ -9,7 +13,12 @@ import { getUserById } from "./user.service";
 import { generateRandomString } from "../utils/common";
 import { createEmailVerification } from "./emailVerification.service";
 import sendEmail from "../utils/sendMail";
-import { getVerifyEmailTemplate } from "../emailTemplates";
+import {
+  getPasswordResetTemplate,
+  getVerifyEmailTemplate,
+} from "../emailTemplates";
+import { secureHash } from "../utils/argon";
+import PasswordResetModel from "../models/passwordReset.model";
 
 interface CreateUserParams {
   email: string;
@@ -118,4 +127,24 @@ export const refreshAccessToken = async (refreshToken: string) => {
   });
 
   return { accessToken, newRefreshToken };
+};
+
+export const requestPasswordReset = async (email: string) => {
+  const user = await UserModel.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(HTTP_CODES.NOT_FOUND, "Email not found.");
+  }
+
+  const token = await secureHash(generateRandomString(8));
+  await PasswordResetModel.create({
+    userId: user._id,
+    email: user.email,
+    token,
+    expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    createdAt: Date.now(),
+  });
+
+  const url = `${APP_ORIGIN}/password-reset/${token}`;
+  await sendEmail({ to: user.email, ...getPasswordResetTemplate(url) });
 };
