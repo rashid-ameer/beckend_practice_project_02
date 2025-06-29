@@ -1,15 +1,15 @@
-import crypto from "node:crypto";
+import crypto from "crypto";
 
-export const generateRandomString = (length: number) => {
+export const generateOTP = (length: number) => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const randomBytes = crypto.randomBytes(length);
 
-  let str = "";
+  let otp = "";
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < length; i++) {
     const randomIndex = randomBytes[i] % chars.length;
-    str += chars[randomIndex];
+    otp += chars[randomIndex];
   }
 
-  return str;
+  return otp;
 };
