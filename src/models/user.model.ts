@@ -1,5 +1,5 @@
 import mongoose, { type Document } from "mongoose";
-import { hashPassword, verifyPassword } from "../utils/argon";
+import { secureHash, verifyHash } from "../utils/argon";
 
 interface UserDocument extends Document {
   email: string;
@@ -40,12 +40,12 @@ const userSchema = new mongoose.Schema<UserDocument>(
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {
-    this.password = await hashPassword(this.password);
+    this.password = await secureHash(this.password);
   }
 });
 
 userSchema.methods.comparePassword = async function (password: string) {
-  return verifyPassword(this.password, password);
+  return verifyHash(this.password, password);
 };
 
 userSchema.methods.omitPassword = function () {
